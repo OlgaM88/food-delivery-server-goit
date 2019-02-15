@@ -1,0 +1,24 @@
+{
+  "name": "foody-server-goit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "  ",
+  "scripts": {
+    "start": "nodemon index.js",
+    "debug": "node --inspect index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OlgaM88/food-delivery-server-goit.git"
+  },
+  "author": "Olga Martynenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OlgaM88/food-delivery-server-goit/issues"
+  },
+  "homepage": "https://github.com/OlgaM88/food-delivery-server-goit#readme",
+  "dependencies": {
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.10"
+  }
+}
