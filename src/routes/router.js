@@ -4,6 +4,7 @@ const signUpRoute = require('./users/sign-up');
 
 
 
+
 const router = {
  '/products': products,
  '/signup' : signUpRoute,
