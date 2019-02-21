@@ -3,53 +3,55 @@ const path = require('path');
 const url = require('url');
 const qs = require("querystring");
 
-  const products = (request, response) => {
+ 
+  const products = (request, response) =>{
+
      if (request.method === "GET") {
      const filePath = path.join(__dirname,  "../../db", "products", "/all-products.json");
-      console.log(filePath);
-   
-  
-    if (request.url !== "/products" ) {
-
-      fs.readFile(filePath, "utf8", (error, data) => {
+     fs.readFile(filePath, "utf8", (error, data) => {
         if (error) {
           console.log(error);
         }
       const allProducts = JSON.parse(data);
-      console.log(allProducts);
-      });
+      
+      let status="success";
+      let result;
       let selectedProducts = [];
-      let selectedProduct;
-
+    
+      var pathName = url.parse(request.url).pathname; 
+      // get id localhost:3001/products/19112835
+      var id = pathName.split("/");
+      var productId = id[2];  
+      console.log(productId);
+      selectedProducts = allProducts.filter(product => Number(productId) === product.id);
      
-    var pathName = url.parse(request.url).pathname; 
-    var id = pathName.split("/");
-    var productId = id[2];
-    selectedProduct = allProducts.filter(product => Number(productId) === product.id);
-
-   const query = url.parse(request.url).query;  
-   
-
-    if (query.ids) {
-      const idsItems = query.ids.split(",");
-      selectedProducts = allProducts.map(product => idsItems.includes(product.id));
-    } else if (query.category) {
-      selectedProducts = allProducts.filter(product => product.category === query.category);
-    }
-    response.writeHead(200, {
-      "Content-Type": "application/json"
-    });
-
-    const dataResponse = ({
-      status: "success",
-      product : selectedProduct
-    }); 
-    console.log(dataResponse);
-    response.end(dataResponse);
+     const query =  url.parse(request.url, true).query;  
+     console.log(query.category);
+    
+     if (query.category){
+     const items = query.category.replace(/['"]+/g, "").split(",");
+     selectedProducts = allProducts.filter(product => product.categories[0] === items[0]);
+     }else if (query.ids){
+     const items = query.ids.replace(/['"]+/g, "").split(",");
+     selectedProducts=allProducts.filter(product => {
+       return items.find(id => product.id === +id);
+        }
+    );
+  };
+  
+  if (selectedProducts.length < 0 &&  productId === undefined){
+      status = "no products";
   }
+    result = ({
+      status: `${status}`,
+      product : selectedProducts
+    }); 
+    response.writeHead(200, { "Content-Type": "application/json" });
+    console.log(result);
+    response.end(JSON.stringify(result));
+  });
+
+  
 };
-   const readStream = fs.createReadStream(filePath);
-    readStream.pipe(response);
-};
-   
+};  
   module.exports = products;

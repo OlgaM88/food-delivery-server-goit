@@ -3,8 +3,6 @@ const products = require('./products/products');
 const signUpRoute = require('./users/sign-up');
 
 
-
-
 const router = {
  '/products': products,
  '/signup' : signUpRoute,

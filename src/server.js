@@ -12,30 +12,12 @@ const startServer = port => {
   const server = http.createServer((request, response) => {
     
     const parsedUrl = url.parse(request.url, true);
-
-    const func = router[parsedUrl.pathname] || router.default;
+    const pathName = "/" + parsedUrl.pathname.split("/")[1] || "/";
+    console.log(pathName);
+    const func = router[pathName] || router.default;
 
     logger(request, response, () => func(request, response));
-/*
-    var pathName = url.parse(request.url).pathname;
-     
-    var id = pathName.split("/");
-    console.log(id);
-    var  userId = id[2];
-    fs.readFile('./src/db/products/all-products.json', "utf8", function (err, data) {
-      if (err) {
-         return console.error(err);
-      }
-      const products = JSON.parse(data);
-      const productByID = products.filter(product => Number(userId) === product.id);
-      const dataResponse = ({
-        status: "success",
-        product : productByID
-      }); 
-      console.log(dataResponse);
-      response.end(dataResponse);
-  });
-   */
+
   });
   server.listen(port);
 };
