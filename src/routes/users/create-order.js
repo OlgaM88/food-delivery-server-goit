@@ -1,47 +1,56 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+var mkdirp = require('mkdirp');
 const products = require('../../db/products/all-products.json');
 
-const productFolder = path.resolve(__dirname, '../../../', 'db/products');
+
 
 const findProducts = (items) => {
   return products.filter(product =>{
-    return items.find(id => product.id === items.id);
+    return items.find(id => product.id === +id);
   })
 }
 
 
+const saveNewOrder = (fileName, data) => {
+  const src = path.resolve(usersFolder, fileName + '.json');
+  const dataStr = JSON.stringify(data);
+
+  return writeFile(src, dataStr);
+};
 
 
-/*находим товары в <all-products.json>
-создаем в папке с юзером папку orders
-создаем в orders новый json с тем что пришло нам из запроса
-отправляем json с готовым заказом
- {
-  "status": "success", 
-  "order": {
-    "id": <orderId>,
-    "user": <userId>, 
-    "products": [<productId1>, <productId2>, <productId2>]
-    "deliveryType": "delivery"
-    "deliveryAdress": "<deliveryAdressText>"
-   }
- }
-если товара нет отправляем json с {'status': 'failed', 'order': null}
-*/
 const createOrder = (req, res) => {
   const order = req.body;
-  console.log(order);cccc
+  const user = req.body.user;
+  const orderProducts = req.body.products;
+  
+  let selectedProducts = findProducts(orderProducts);
+  console.log(selectedProducts);
 
- /* var bodyStr = '';
-  req.on("data",function(chunk){
-      bodyStr += chunk.toString();
+  const fileName = user;
+  const userFolder = path.join(__dirname, '../../', `db/users/${fileName}/orders`);
+  fs.mkdir(userFolder, { recursive: true }, (err) => {
+    if (err) throw err;
   });
-  req.on("end",function(){
-      res.send(bodyStr);
-  });*/
 
+  const sendResponse = () => {
+    res.json({
+      status: 'success',
+      order: order
+  });
+};
+
+
+  const src = path.resolve(userFolder, fileName + '.json');
+  const dataStr = JSON.stringify(order);
+  console.log(dataStr);
+  fs.writeFile(src, dataStr);
+
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(sendResponse());
 };
 
 
