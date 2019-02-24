@@ -1,12 +1,18 @@
+const express = require('express');
 const mainRoute = require('./main/main');
-const products = require('./products/products');
-const signUpRoute = require('./users/sign-up');
+const productsCtrl = require('./products/products');
+const createOrder = require('./users/create-order');
 
+const apiRoutes = express.Router();
 
-const router = {
- '/products': products,
- '/signup' : signUpRoute,
-  default: mainRoute
-};
+   apiRoutes
+  .get('/', mainRoute)
+  .get('/products', productsCtrl.getProducts)
+  .get('/products/:id', productsCtrl.getProduct)
+ 
+  
 
-module.exports = router;
+  .post('/orders/', createOrder)
+ /* .post('/users', productsCtrlcreateUser);*/
+
+  module.exports = apiRoutes;

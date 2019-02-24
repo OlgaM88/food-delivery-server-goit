@@ -1,57 +1,65 @@
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
-const qs = require("querystring");
+const products = require('../../db/products/all-products.json');
 
- 
-  const products = (request, response) =>{
+const getProductFromDb = id => {
 
-     if (request.method === "GET") {
-     const filePath = path.join(__dirname,  "../../db", "products", "/all-products.json");
-     fs.readFile(filePath, "utf8", (error, data) => {
-        if (error) {
-          console.log(error);
-        }
-      const allProducts = JSON.parse(data);
-      
-      let status="success";
-      let result;
-      let selectedProducts = [];
-    
-      var pathName = url.parse(request.url).pathname; 
-      // get id localhost:3001/products/19112835
-      var id = pathName.split("/");
-      var productId = id[2];  
-      console.log(productId);
-      selectedProducts = allProducts.filter(product => Number(productId) === product.id);
-     
-     const query =  url.parse(request.url, true).query;  
-     console.log(query.category);
-    
-     if (query.category){
-     const items = query.category.replace(/['"]+/g, "").split(",");
-     selectedProducts = allProducts.filter(product => product.categories[0] === items[0]);
-     }else if (query.ids){
-     const items = query.ids.replace(/['"]+/g, "").split(",");
-     selectedProducts=allProducts.filter(product => {
+ return products.find(product => Number(id) === product.id);
+};
+
+const getSomeProductsByIds = ids =>{
+  const items = ids.replace(/['"]+/g, "").split(",");
+     return products.filter(product => {
        return items.find(id => product.id === +id);
-        }
-    );
+});
+}
+
+const getProductsByCategory = category => {
+  const items = category.replace(/['"]+/g, "").split(",");
+  return products.filter(product => product.categories[0] === items[0]);
+}
+
+/*const findProducts = (products) => {
+  return products.filter 
+}*/
+//GET /products - получение списка продуктов
+
+  const getProducts = (req, res) => {
+    const ids = req.query.ids;
+    const category = req.query.category;
+    let result = products;
+    if (ids) {
+    result = getSomeProductsByIds(ids);
+    }
+    if(category){
+      result = getProductsByCategory(category);
+    }
+    res.send(result)
+  };
+
+  
+
+  //GET /products/:id - получение товара
+
+  const getProduct = (request, response) => {
+    console.log(request);
+    const id = request.params.id;
+    let result = getProductFromDb(id);
+    console.log(result);
+    if (result){
+    response.set("Content-Type", "application/json");
+    response.status(200);
+    response.json({ product: result });
+    }else{
+      response.set("Content-Type", "application/json");
+      response.status(400);
+      response.json({'status': 'no products', 'products': []});
+    }
+  
+    
   };
   
-  if (selectedProducts.length < 0 &&  productId === undefined){
-      status = "no products";
-  }
-    result = ({
-      status: `${status}`,
-      product : selectedProducts
-    }); 
-    response.writeHead(200, { "Content-Type": "application/json" });
-    console.log(result);
-    response.end(JSON.stringify(result));
-  });
+  
 
   
-};
-};  
-  module.exports = products;
+
+  
+  module.exports = {getProducts, getProduct};
