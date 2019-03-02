@@ -7,12 +7,15 @@ const morgan = require('morgan');
 const router = require('./routes/router');
 const logger = morgan("combined");
 const fs = require('fs');
+const mongoose = require('mongoose');
+
 
 /*const options = {
   key: fs.readFileSync(path.join(__dirname, "./ssl/server.key")),
   cert: fs.readFileSync(path.join(__dirname, "./ssl/server.crt"))
 };
 */
+
 const errorHandler = (req, res, next)  => {
   res.status(500).send('No such page');
   next();

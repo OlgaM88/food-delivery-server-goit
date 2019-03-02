@@ -1,43 +1,30 @@
+const mongoose = require('mongoose');
+
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-
-const usersFolder = path.resolve(__dirname, '../../../', 'db/users');
-console.log(usersFolder);
+const User = require('../../model/user');
 
 
-const writeFile = util.promisify(fs.writeFile);
 
-const saveNewUser = (fileName, data) => {
-  const src = path.resolve(usersFolder, fileName + '.json');
-  const dataStr = JSON.stringify(data);
+const createUser = (request, response, next) => {
+ const newUser = {
+   _id: new mongoose.Types.ObjectId,
+   username : request.body.username,
+   telephone : request.body.telephone,
+   password: request.body.password,
+   email: request.body.email,
+ }
 
-  return writeFile(src, dataStr);
-};
-
-const createUser = (request, response) => {
-  const user = request.body;
-  console.log(user);
-  const userData =  { ...user, id: Math.random().toString(36).slice(-5)};
-  console.log(userData);
-  fileName =  path.join(__dirname, "../../db/users/all-users.json");
-  
-  fs.readFile(
-    fileName,
-     function (err, data) {
-    var json = JSON.parse(data)
-    json.push(userData);
-
-  fs.writeFile(fileName,
-     JSON.stringify(json))
-})
- 
-let newUser = ({
-    status: "success",
-    user : userData,
-    
-  });
-  response.end(JSON.stringify(newUser));
+   newUser.save().then((result) => {
+  console.log(result);
+   }).catch(err => {
+     console.log(err)
+   })
+   res.status(201).json({
+     status:sucess,
+     user: newUser
+   })
 
 };
 
