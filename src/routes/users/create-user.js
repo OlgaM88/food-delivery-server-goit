@@ -1,31 +1,32 @@
 const mongoose = require('mongoose');
-
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
 const User = require('../../model/user');
 
 
 
 const createUser = (request, response, next) => {
- const newUser = {
-   _id: new mongoose.Types.ObjectId,
-   username : request.body.username,
-   telephone : request.body.telephone,
-   password: request.body.password,
-   email: request.body.email,
- }
+  const user = request.body;
+  const userData = { ...user, _id: new mongoose.Types.ObjectId  };
 
-   newUser.save().then((result) => {
-  console.log(result);
-   }).catch(err => {
-     console.log(err)
-   })
-   res.status(201).json({
-     status:sucess,
-     user: newUser
-   })
+  const newUser = new User(userData);
+  const sendResponse = (user) => {
+    console.log(user);
+
+    response.json({
+      status: 'success',
+      user
+    });
+  };
+
+  const sendError = () => {
+    response.status(400);
+    response.json({
+      error: 'user was not saved'
+    });
+  };
+
+  newUser.save()
+    .then(sendResponse)
+    .catch(sendError)
 
 };
-
 module.exports = createUser;
