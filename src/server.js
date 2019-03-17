@@ -1,6 +1,7 @@
 const express = require('express');
 const url = require('url');
 const path = require('path');
+const config = require('../config');
 const bodyParser = require('body-parser');
 const app = require('./modules/app');
 const morgan = require('morgan');
@@ -8,6 +9,7 @@ const router = require('./routes/router');
 const logger = morgan("combined");
 const fs = require('fs');
 const mongoose = require('mongoose');
+
 
 
 /*const options = {
@@ -25,12 +27,12 @@ const staticPath = path.join(__dirname, '..', 'assets');
 
 const startServer = port => {
   app
-    .use(bodyParser.urlencoded({ extended: false }))
-    .use(bodyParser.json())
-    .use(morgan('dev'))
-    .use(express.static(staticPath))
-    .use('/', router)
-    .use(errorHandler);
+  .set("superSecret", config.secret)
+  .use(bodyParser.urlencoded({ extended: false }))
+  .use(bodyParser.json())
+  .use(morgan("dev"))
+  .use("/", router)
+  .use(errorHandler);
 
   app.listen(port);
 

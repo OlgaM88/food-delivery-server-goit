@@ -1,13 +1,24 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const User = require('../../model/user');
 
 
-
 const createUser = (request, response, next) => {
-  const user = request.body;
-  const userData = { ...user, _id: new mongoose.Types.ObjectId  };
 
-  const newUser = new User(userData);
+  const { username, telephone, favoriteProducts,viewedProducts, orders, email, password } = request.body;
+
+ const hashedPassword = bcrypt.hashSync(password, 10);
+
+  const newUser = new User({
+    _id: new mongoose.Types.ObjectId,
+    username,
+    telephone,
+    email,
+    favoriteProducts,
+    viewedProducts, 
+    orders,
+    password: hashedPassword
+  });
   const sendResponse = (user) => {
     console.log(user);
 

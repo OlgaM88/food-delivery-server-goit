@@ -4,6 +4,7 @@ console.log(dbPassword)
 
 const config = {
     port: 3001,
+    secret: 'secret-key',
     dbUser,
     dbPassword,
     databaseUrl:/* `mongodb+srv://${ dbUser }: ${ dbPassword }@cluster0-x8mmv.mongodb.net/test?retryWrites=true`*/
