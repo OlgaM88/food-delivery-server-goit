@@ -6,6 +6,7 @@ const verifyToken = require('../../modules/check-token');
 
 
 const currentUser = (req, res) => {
+    console.log(req)
 
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
@@ -14,6 +15,7 @@ const currentUser = (req, res) => {
 User.findOne(userId, function(err, user) {
     req.user = user;
   });
+  
 
 };
 module.exports = currentUser;
