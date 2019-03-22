@@ -1,5 +1,8 @@
 const products = require('../../db/products/all-products.json');
 const helpers = require('./helpers');
+const fs = require('fs');
+const path = require('path');
+const Product = require('../../model/product');
 /*
 const getProductFromDb = id => {
  return products.find(product => Number(id) === product.id);
@@ -54,5 +57,18 @@ const getProductsByCategory = category => {
   
     
   };
+  const setProducts = (request, response) => {
+    
+    const filePath = path.join(__dirname,  "../../db", "products", "/all-products.json");
+    const content = JSON.parse(fs.readFileSync(filePath, "utf8"));
+   
+     content.forEach(item => {
+     const newProduct = new Product(item);
+     newProduct.save()
+   })
+   
+  };
   
-  module.exports = {getProducts, getProduct};
+  
+  
+  module.exports = {getProducts, getProduct, setProducts};

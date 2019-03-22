@@ -9,7 +9,11 @@ const currentUser = require('./authenticate/current-user');
 const updateUser = require('./users/update-user');
 const createOrder = require('./orders/create-orders');
 const getOrderById = require('./orders/get-order');
+const createIngredients = require('./ingredients/create-ingredients');
+const createComment = require('./comments/create-comment');
+const getComments = require('./comments/get-comments');
 const verifyToken = require('../modules/check-token');
+
 
   const apiRoutes = express.Router();
    apiRoutes
@@ -18,7 +22,7 @@ const verifyToken = require('../modules/check-token');
   .post('/auth/login', login)
   .use(verifyToken)
 
-  .get('/auth/сurrent', currentUser)
+  .get('/auth/current', currentUser) 
   .get('/auth/logout', logout)
   .get('/products', productsCtrl.getProducts)
   .get('/products/:id', productsCtrl.getProduct)
@@ -26,6 +30,9 @@ const verifyToken = require('../modules/check-token');
   .get('/orders/:id', getOrderById)
   .put('/users/:id', updateUser )
   .post('/orders/', createOrder)
+  .post('/ingredients', createIngredients)
+  .post('/comments', createComment)
+  .get('/comments', getComments)
  
 
   module.exports = apiRoutes;

@@ -25,7 +25,7 @@ const login = (req, res) => {
 
     function onFind (err, user){
         if (err) throw err;
-        
+        console.log(user, password);
         const correctPass = passMatches(password, user.password);
         
         if (!user || !correctPass){
